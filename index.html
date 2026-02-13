@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Chronicles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: radial-gradient(circle, #2a6b77 0%, #1a3a40 100%);
+            font-family: 'Archivo Black', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 4px 4px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            width: 90vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .slide {
+            position: absolute;
+            color: #4df3ff;
+            font-size: clamp(2.5rem, 8vw, 5rem); 
+            text-transform: uppercase;
+            line-height: 1.1;
+            letter-spacing: 2px;
+            opacity: 0;
+            text-shadow: 0 0 15px rgba(77, 243, 255, 0.8), 
+                         0 0 30px rgba(77, 243, 255, 0.4);
+            animation: fadeLoop 6s infinite;
+            width: 100%; /* Ensures text wraps correctly on narrow screens */
+        }
+
+        /* MOBILE ADJUSTMENTS */
+        @media (max-width: 768px) {
+            .slide {
+                font-size: 14vw; /* Larger font relative to screen width */
+                line-height: 1.2; /* More vertical breathing room */
+            }
+            .subtext {
+                font-size: 8vw !important; /* Larger subtext for mobile */
+                margin-top: 30px !important;
+            }
+            .underline {
+                width: 60% !important;
+                bottom: -40px !important;
+            }
+        }
+
+        .slide-1 { animation-delay: 0s; }
+        .slide-2 { animation-delay: 3s; }
+
+        @keyframes fadeLoop {
+            0%, 5% { opacity: 0; transform: scale(0.95); filter: blur(10px); }
+            15%, 45% { opacity: 1; transform: scale(1); filter: blur(0px); }
+            55%, 100% { opacity: 0; transform: scale(1.05); filter: blur(10px); }
+        }
+
+        .underline {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: #4df3ff;
+            box-shadow: 0 0 15px #4df3ff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="slide slide-1">
+            WHY DID I NAME<br>MY FACEBOOK PAGE
+            <div class="subtext" style="font-size: 0.4em; margin-top: 20px; opacity: 0.8;">IN THE 'VERSE: STAR CHRONICLES?</div>
+            <div class="underline"></div>
+        </div>
+        
+        <div class="slide slide-2">
+            BECAUSE I DO WHAT I PLEASE.
+            <div class="underline"></div>
+        </div>
+    </div>
+
+</body>
+</html>
