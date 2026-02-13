@@ -1,0 +1,9 @@
+{
+  "name": "i-do-what-i-please",
+  "version": "1.0.0",
+  "description": "I Do What I Please - Because I'll name my Facebook page whatever I damn well please",
+  "private": true,
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}
