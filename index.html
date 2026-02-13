@@ -130,5 +130,111 @@
         </div>
     </div>
 
+    <!-- Visitor Tracking Script -->
+    <script>
+        (function() {
+            'use strict';
+
+            function getSessionId() {
+                let sessionId = sessionStorage.getItem('sessionId');
+                if (!sessionId) {
+                    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    sessionStorage.setItem('sessionId', sessionId);
+                }
+                return sessionId;
+            }
+
+            function getDeviceType() {
+                const ua = navigator.userAgent;
+                if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+                    return 'Tablet';
+                }
+                if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+                    return 'Mobile';
+                }
+                return 'Desktop';
+            }
+
+            function getScreenResolution() {
+                return window.screen.width + 'x' + window.screen.height;
+            }
+
+            function getUserLanguage() {
+                return navigator.language || navigator.userLanguage || 'Unknown';
+            }
+
+            function getUserTimezone() {
+                try {
+                    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+                } catch (e) {
+                    return 'Unknown';
+                }
+            }
+
+            function sendLog(urlPath, sheetName) {
+                try {
+                    const visitorData = {
+                        domain: window.location.hostname,
+                        referrer: document.referrer || 'Direct',
+                        urlPath: urlPath,
+                        sessionId: getSessionId(),
+                        deviceType: getDeviceType(),
+                        userAgent: navigator.userAgent,
+                        screenResolution: getScreenResolution(),
+                        language: getUserLanguage(),
+                        timezone: getUserTimezone(),
+                        sheetName: sheetName
+                    };
+
+                    fetch('/.netlify/functions/log-visit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(visitorData),
+                        keepalive: true
+                    }).catch(function(err) {
+                        console.debug('Visit logging failed:', err);
+                    });
+                } catch (error) {
+                    console.debug('Error logging visit:', error);
+                }
+            }
+
+            function logVisit() {
+                var urlPath = window.location.pathname;
+                var hasLogged = sessionStorage.getItem('hasLoggedVisit');
+
+                // Defer all logging by 3 seconds to improve page load performance
+                setTimeout(function() {
+                    // Log initial visit to visitor_logs (once per session)
+                    if (!hasLogged) {
+                        sessionStorage.setItem('hasLoggedVisit', 'true');
+                        sendLog(urlPath, 'visitor_logs');
+                    }
+
+                    // Log page view to page_views (every navigation)
+                    // Use requestIdleCallback to ensure this doesn't impact performance
+                    if ('requestIdleCallback' in window) {
+                        requestIdleCallback(function() {
+                            sendLog(urlPath, 'page_views');
+                        }, { timeout: 2000 });
+                    } else {
+                        // Fallback for browsers that don't support requestIdleCallback
+                        setTimeout(function() {
+                            sendLog(urlPath, 'page_views');
+                        }, 100);
+                    }
+                }, 3000); // Wait 3 seconds before logging
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', logVisit);
+            } else {
+                logVisit();
+            }
+        })();
+    </script>
+
 </body>
 </html>
